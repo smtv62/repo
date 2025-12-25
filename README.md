@@ -1,4 +1,4 @@
-# TVDahiBet IPTV Bot
+# IPTV Bot
 
-Bu repo, tvdahibetX.com domainleri üzerinde çalışan otomatik playlist üretici bottur.
-Workflow her 3 saatte bir çalışır.
+Bu repo,  otomatik playlist üretici bottur.
+Workflow her 12 saatte bir çalışır.
