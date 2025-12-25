@@ -1,24 +1,32 @@
-from channels import CHANNELS
+import requests
+from resolver import extract_channels, extract_base_stream
 
-BASEURL = "https://dga1op10s1u3leo.38f3bb9511487c.click/live"
-SITE = "https://www.xyzsports-1f2df0dd8c.xyz"
+SITE = "https://www.xyzsports-1f2df0dd8c.xyz/"
 
-def main():
-    lines = ["#EXTM3U"]
+r = requests.get(SITE, timeout=10)
+channels = extract_channels(r.text)
 
-    for ch in CHANNELS:
-        stream = BASEURL.rstrip("/") + "/" + ch["file"]
+if not channels:
+    print("[HATA] Kanal bulunamadı")
+    exit(1)
 
-        lines.append(f'#EXTINF:-1,{ch["name"]}')
-        lines.append(f'#EXTVLCOPT:http-referrer={SITE}/')
-        lines.append(stream)
+lines = ["#EXTM3U"]
 
-        print(f"[OK] Eklendi: {ch['name']}")
+for url in channels:
+    player = requests.get(url, timeout=10)
+    base = extract_base_stream(player.text)
 
-    with open("playlist.m3u", "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
+    if not base:
+        continue
 
-    print("[OK] playlist.m3u oluşturuldu")
+    name = url.split("id=")[-1].replace("-", " ").title()
+    stream = base + "playlist.m3u8"
 
-if __name__ == "__main__":
-    main()
+    lines.append(f"#EXTINF:-1,{name}")
+    lines.append(f"#EXTVLCOPT:http-referrer={SITE}")
+    lines.append(stream)
+
+with open("playlist.m3u", "w", encoding="utf-8") as f:
+    f.write("\n".join(lines))
+
+print("[OK] playlist.m3u oluşturuldu")
