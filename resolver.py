@@ -2,32 +2,19 @@ import requests
 import re
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0"
+    "User-Agent": "Mozilla/5.0",
+    "Referer": "https://www.xyzsports-1f2df0dd8c.xyz/"
 }
 
-def find_xyzsports_site():
-    url = "https://www.selcuksportshd.is/"
+def find_baseurl():
+    url = "https://main.uxsyplayer03b8129d46.click/index.php?id=s-sport"
+
     r = requests.get(url, headers=HEADERS, timeout=10)
-
-    match = re.search(r'https://www\.xyzsports-[a-z0-9]+\.xyz', r.text)
-    if match:
-        site = match.group(0)
-        print(f"[OK] Xyzsports bulundu: {site}")
-        return site
-
-    return None
-
-
-def find_baseurl(site):
-    r = requests.get(site, headers=HEADERS, timeout=10)
-
-    # baseurl = data.baseurl;
-    match = re.search(r'baseurl\s*=\s*data\.baseurl', r.text)
-    if not match:
+    if r.status_code != 200:
         return None
 
-    m3u8 = re.search(r'https?://[^"\']+\.m3u8', r.text)
-    if m3u8:
-        return m3u8.group(0).rsplit("/", 1)[0]
+    match = re.search(r"baseStreamUrl\s*=\s*'([^']+)'", r.text)
+    if match:
+        return match.group(1)
 
     return None
