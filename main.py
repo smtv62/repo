@@ -1,14 +1,13 @@
-import requests
+from resolver import find_xyzsports_site, find_baseurl
 from channels import CHANNELS
-from resolver import find_baseurl, find_active_site
 
 def main():
-    site = find_active_site(start=3, end=50)
+    site = find_xyzsports_site()
     if not site:
-        print("[HATA] Aktif site bulunamadı")
+        print("[HATA] Xyzsports linki bulunamadı")
         return
 
-    baseurl = find_baseurl(site, "yayinzirve")
+    baseurl = find_baseurl(site)
     if not baseurl:
         print("[HATA] BaseURL bulunamadı")
         return
@@ -16,11 +15,9 @@ def main():
     lines = ["#EXTM3U"]
 
     for ch in CHANNELS:
-        stream = baseurl.rstrip("/") + "/" + ch["file"]
-        lines.append(f'#EXTINF:-1,{ch["name"]}')
-        lines.append(f'#EXTVLCOPT:http-referrer={site}/')
-        lines.append(stream)
-        print(f"[OK] Eklendi: {ch['name']}")
+        lines.append(f"#EXTINF:-1,{ch['name']}")
+        lines.append(f"#EXTVLCOPT:http-referrer={site}")
+        lines.append(f"{baseurl}/{ch['file']}")
 
     with open("playlist.m3u", "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
