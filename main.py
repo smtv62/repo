@@ -1,26 +1,20 @@
-from resolver import find_xyzsports_site, find_baseurl
-from channels import CHANNELS
+from resolver import find_baseurl
 
 def main():
-    site = find_xyzsports_site()
-    if not site:
-        print("[HATA] Xyzsports linki bulunamadı")
-        return
-
-    baseurl = find_baseurl(site)
+    baseurl = find_baseurl()
     if not baseurl:
         print("[HATA] BaseURL bulunamadı")
         return
 
-    lines = ["#EXTM3U"]
-
-    for ch in CHANNELS:
-        lines.append(f"#EXTINF:-1,{ch['name']}")
-        lines.append(f"#EXTVLCOPT:http-referrer={site}")
-        lines.append(f"{baseurl}/{ch['file']}")
+    playlist = [
+        "#EXTM3U",
+        "#EXTINF:-1,S Sport",
+        "#EXTVLCOPT:http-referrer=https://www.xyzsports-1f2df0dd8c.xyz/",
+        baseurl + "playlist.m3u8"
+    ]
 
     with open("playlist.m3u", "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
+        f.write("\n".join(playlist))
 
     print("[OK] playlist.m3u oluşturuldu")
 
